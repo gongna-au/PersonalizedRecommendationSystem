@@ -1,0 +1,629 @@
+basePath: /api/v1
+definitions:
+  CreateOrderRequest:
+    properties:
+      barcode:
+        type: string
+      discount:
+        type: number
+      phone:
+        type: string
+      sid:
+        type: integer
+    required:
+    - barcode
+    - discount
+    - phone
+    - sid
+    type: object
+  CreateReturnOrderRequest:
+    properties:
+      ordercode:
+        type: string
+      sid:
+        type: integer
+    required:
+    - ordercode
+    - sid
+    type: object
+  GetGoodsInStockByNameRequest:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  GetGoodsInStockByNumRequest:
+    properties:
+      num:
+        type: integer
+    required:
+    - num
+    type: object
+  GetGoodsInStockBySupplierRequest:
+    properties:
+      supplier:
+        type: string
+    required:
+    - supplier
+    type: object
+  GetOrdersByTimeRequest:
+    properties:
+      end:
+        type: string
+      start:
+        type: string
+    required:
+    - end
+    - start
+    type: object
+  GetOrdersByUserRequest:
+    properties:
+      phone:
+        type: string
+    required:
+    - phone
+    type: object
+  GetProfitByTimeRequest:
+    properties:
+      end:
+        type: string
+      start:
+        type: string
+    required:
+    - end
+    - start
+    type: object
+  LoginByPhoneRequest:
+    properties:
+      password:
+        type: string
+      phone:
+        type: string
+    type: object
+  Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+  SignupUsingPhoneRequest:
+    properties:
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+    required:
+    - name
+    - password
+    - phone
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /api/v1/goods/name:
+    post:
+      consumes:
+      - application/json
+      description: 通过商品名字查询商品的库存情况
+      parameters:
+      - description: Name--商品名
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/GetGoodsInStockByNameRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get Goods In Stock By Name
+      tags:
+      - goods
+  /api/v1/goods/num:
+    post:
+      consumes:
+      - application/json
+      description: 通过商品的剩余量供查询商品的库存情况
+      parameters:
+      - description: Num--数量
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/GetGoodsInStockByNumRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get Goods In Stock By Num
+      tags:
+      - goods
+  /api/v1/goods/supplier:
+    post:
+      consumes:
+      - application/json
+      description: 通过商品供应商查询商品的库存情况
+      parameters:
+      - description: Supplier--供应商
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/GetGoodsInStockBySupplierRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get Goods In Stock By Supplier
+      tags:
+      - goods
+  /api/v1/login/common:
+    post:
+      consumes:
+      - application/json
+      description: 普通用户通过帐号和密码登陆
+      parameters:
+      - description: Phone--电话号码 和Password--密码
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/LoginByPhoneRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Login By Phone
+      tags:
+      - login
+  /api/v1/login/member:
+    post:
+      consumes:
+      - application/json
+      description: 会员通过帐号和密码登陆
+      parameters:
+      - description: Phone--电话号码 和Password--密码
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/LoginByPhoneRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Login By Phone
+      tags:
+      - login
+  /api/v1/login/staff:
+    post:
+      consumes:
+      - application/json
+      description: 职工通过帐号和密码登陆
+      parameters:
+      - description: Phone--电话号码 和Password--密码
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/LoginByPhoneRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Login By Phone
+      tags:
+      - login
+  /api/v1/orders/:
+    post:
+      consumes:
+      - application/json
+      description: 创建一份订单
+      parameters:
+      - description: 'Phone--付款人账户|| SaleId-- 收银员ID ||  Barcode-- 商品条形码  || Discount--折扣 '
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/CreateOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Create Order
+      tags:
+      - order
+  /api/v1/orders/return:
+    post:
+      consumes:
+      - application/json
+      description: 创建一份退货订单
+      parameters:
+      - description: ordercode--订单号码 || sid--负责退货的员工的帐号ID
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/CreateReturnOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Create Return Order
+      tags:
+      - order
+  /api/v1/orders/time:
+    post:
+      consumes:
+      - application/json
+      description: 管理人员可以通过这个接口获取到一段时间内部所有的订单记录
+      parameters:
+      - description: start--开始时间|| end-- 结束时间
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/GetOrdersByTimeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: GetOrdersByTime
+      tags:
+      - order
+  /api/v1/orders/user:
+    post:
+      consumes:
+      - application/json
+      description: 用户获取到自己的所有的订单
+      parameters:
+      - description: Phone--用户账户
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/GetOrdersByUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get Orders By User
+      tags:
+      - order
+  /api/v1/profit:
+    post:
+      consumes:
+      - application/json
+      description: 得到一段时间内部超市总的利润
+      parameters:
+      - description: start--起始时间|| end -- 结束时间
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/GetProfitByTimeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get Profit By Time
+      tags:
+      - profit
+  /api/v1/profit/name:
+    post:
+      consumes:
+      - application/json
+      description: 得到一段时间内某个商品总的利润
+      parameters:
+      - description: 'start--起始时间 || end -- 结束时间 || name-- 商品名  '
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/CreateOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get Profit By Time And Name
+      tags:
+      - profit
+  /api/v1/sign/common:
+    post:
+      consumes:
+      - application/json
+      description: 使用手机号和密码注册帐号
+      parameters:
+      - description: Phone--电话号码||Password-- 密码|| Name--昵称
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/SignupUsingPhoneRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Sign up Using Phone
+      tags:
+      - sign
+  /api/v1/sign/member:
+    post:
+      consumes:
+      - application/json
+      description: 使用手机号和密码注册帐号
+      parameters:
+      - description: Phone--电话号码||Password-- 密码|| Name--昵称
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/SignupUsingPhoneRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Sign up Using Phone
+      tags:
+      - sign
+  /api/v1/sign/staff:
+    post:
+      consumes:
+      - application/json
+      description: 使用手机号和密码注册帐号
+      parameters:
+      - description: Phone--电话号码||Password-- 密码|| Name--昵称
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/SignupUsingPhoneRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Sign up Using Phone
+      tags:
+      - sign
+swagger: "2.0"
