@@ -1,16 +1,10 @@
 package router
 
 import (
+	"PersonalizedRecommendationSystem/handler/login"
+	"PersonalizedRecommendationSystem/handler/recommend"
 	"net/http"
 	"strings"
-
-	"PersonalizedRecommendationSystem/handler/goods"
-
-	"PersonalizedRecommendationSystem/handler/login"
-
-	"PersonalizedRecommendationSystem/handler/order"
-
-	"PersonalizedRecommendationSystem/handler/profit"
 
 	"PersonalizedRecommendationSystem/handler/signup"
 
@@ -75,36 +69,20 @@ func RegisterAPIRoutes(g *gin.Engine) {
 	{
 		//使用手机号和密码登陆
 		g1.POST("/common", login.CommonUserLoginByPhone)
-		g1.POST("/staff", login.StaffUserLoginByPhone)
-		g1.POST("/member", login.MemberUserLoginByPhone)
 	}
 	g2 := g.Group("/api/v1/sign")
 	{
 		//使用手机号和密码注册
 		g2.POST("/common", signup.CommonUserSignupUsingPhone)
-		g2.POST("/staff", signup.StaffUserSignupUsingPhone)
-		g2.POST("/member", signup.MemberUserSignupUsingPhone)
 	}
 
-	g3 := g.Group("/api/v1/goods")
+	g3 := g.Group("/api/v1/recommend")
 	{
-		g3.POST("/name", goods.GetGoodsInStockByName)
-		g3.POST("/num", goods.GetGoodsInStockByNum)
-		g3.POST("/supplier", goods.GetGoodsInStockBySupplier)
-	}
-
-	g4 := g.Group("/api/v1/orders")
-	{
-		g4.POST("/", order.CreateOrder)
-		g4.POST("/time", order.GetOrdersByTime)
-		g4.POST("/user", order.GetOrdersByUser)
-		g4.POST("/return", order.CreateReturnOrder)
-	}
-	g5 := g.Group("/api/v1/profit")
-	{
-		g5.POST("/", profit.GetProfitByTime)
-		g5.POST("/name", profit.GetProfitByTimeAndName)
-
+		g3.POST("/browse", recommend.GetResourceByBrowse)
+		g3.POST("/collect", recommend.GetResourceByCollect)
+		g3.POST("/like", recommend.GetResourceByLike)
+		g3.POST("/click", recommend.GetResourceByClick)
+		g3.POST("/save", recommend.GetResourceBySave)
 	}
 
 }

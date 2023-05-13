@@ -34,15 +34,15 @@ func CommonUserSignupUsingPhone(c *gin.Context) {
 		response.Error(c, err, "请求失败")
 		return
 	}
-	err := user.JudgeCommonUserPhoneExist(request.Phone)
+	err := user.JudgeCommonUserEmailExist(request.Email)
 	if err != nil {
 		response.BadRequest(c, err)
 		return
 	}
 	// 2. 验证成功，创建数据
 	userModel := user.CommonUserModel{
-		Name:     request.Name,
-		Phone:    request.Phone,
+		UserName: request.Username,
+		Email:    request.Email,
 		Password: request.Password,
 	}
 	err = userModel.Create()
@@ -50,7 +50,7 @@ func CommonUserSignupUsingPhone(c *gin.Context) {
 		response.Abort500(c, err.Error())
 	}
 	if userModel.ID > 0 {
-		token := jwt.NewJWT().IssueToken(userModel.GetStringID(), userModel.Name)
+		token := jwt.NewJWT().IssueToken(userModel.GetStringID(), userModel.UserName)
 		response.CreatedJSON(c, gin.H{
 			"token":  token,
 			"userId": userModel.GetStringID(),

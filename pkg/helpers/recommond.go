@@ -1,4 +1,3 @@
-// 计算两个向量之间的余弦相似度
 package helpers
 
 import (
@@ -6,155 +5,101 @@ import (
 	"sort"
 )
 
-func cosineSimilarity(vec1, vec2 []float64) float64 {
-	dotProduct := 0.0
-	norm1 := 0.0
-	norm2 := 0.0
-	for i := 0; i < len(vec1); i++ {
-		dotProduct += vec1[i] * vec2[i]
-		norm1 += vec1[i] * vec1[i]
-		norm2 += vec2[i] * vec2[i]
-	}
-	return dotProduct / (math.Sqrt(norm1) * math.Sqrt(norm2))
+type BaseModel struct {
+	ID int
 }
 
-// 计算用户之间的相似度矩阵
-func computeUserSimilarityMatrix(data map[int]map[int]float64) map[int]map[int]float64 {
-	simMatrix := make(map[int]map[int]float64)
-	for uid1, items1 := range data {
-		simMatrix[uid1] = make(map[int]float64)
-		for uid2, items2 := range data {
-			if uid1 != uid2 {
-				vec1 := make([]float64, len(items1))
-				vec2 := make([]float64, len(items1))
-				k := 0
-				for iid := range items1 {
-					if rating2, ok := items2[iid]; ok {
-						vec1[k] = items1[iid]
-						vec2[k] = rating2
-						k++
-					}
+type ResourceModel struct {
+	ID          int
+	Name        string
+	Description string
+	Url         string
+	Tag         string
+	Score       float64
+}
+
+type UserActionModel struct {
+	ID         int
+	UserID     int
+	ResourceID int
+	ActionType string
+}
+
+/*这段代码实现了一个基于用户交互历史和资源特征计算相似度的推荐系统。具体而言，它的过程分为以下几步：
+
+1. 获取用户最近交互的资源：遍历给定的用户行为列表，构建一个包含最近访问过的资源ID的集合。
+
+2. 计算资源之间的相似度：遍历所有资源，针对每个资源，提取其特征（如名称、描述、标签等），然后与用户访问过的资源进行比较，计算它们之间的相似度得分。相似度得分的计算方法是：统计两个资源特征的交集大小，并将其除以两者特征集合大小的平方根。这个值越大，则说明两个资源越相似。
+
+3. 推荐资源，并按评分排序：遍历所有资源，对于每个资源，首先排除那些最近被用户访问过的资源；然后，针对每个用户对该资源的交互历史，给出一个初始的评分；最后，乘上前面计算得到的相似度得分，得到最终的评分。根据评分大小将所有资源排序，返回前N个资源作为推荐结果。
+
+需要注意的是，在这个方法中，关于资源特征的处理方式比较简单，只是将名称、描述和标签拼接在一起后以字符串的方式进行比较。如果使用更加复杂的特征提取方法，如人工标注、文本分析或深度学习等，可能会得到更好的推荐效果。
+
+
+
+*/
+
+func GetRecommendations(userActions []UserActionModel, resources []ResourceModel, numRecs int) []ResourceModel {
+	// 遍历用户与资源之间的交互记录，获取用户最近交互的资源，并保存在字典 recentResources 中。
+	recentResources := make(map[int]bool)
+	for _, action := range userActions {
+		if _, ok := recentResources[action.ResourceID]; !ok {
+			recentResources[action.ResourceID] = true
+		}
+	}
+
+	// 对每个资源计算它们之间的相似度，并保存在字典 simScores 中。
+	simScores := make(map[int]float64)
+	resourceFeatures := make(map[int]map[string]bool) // 资源的特征，例如标签、描述等
+	for _, r := range resources {
+		resourceFeatures[r.ID] = make(map[string]bool)
+		for _, f := range []string{r.Name, r.Description, r.Tag} {
+			resourceFeatures[r.ID][f] = true
+		}
+
+		// 计算相似度
+		simScore := 0.0
+		for id := range recentResources {
+			if id == r.ID {
+				continue
+			}
+			featureCount := 0
+			for f := range resourceFeatures[id] {
+				if resourceFeatures[r.ID][f] {
+					featureCount++
 				}
-				vec1 = vec1[:k]
-				vec2 = vec2[:k]
-				simMatrix[uid1][uid2] = cosineSimilarity(vec1, vec2)
+			}
+			simScore += float64(featureCount) / math.Sqrt(float64(len(resourceFeatures[id]))*float64(len(resourceFeatures[r.ID])))
+		}
+		simScores[r.ID] = simScore
+	}
+
+	// 对所有资源进行评分，并按照得分排序，返回前 numRecs 个推荐结果。
+	recommendations := make([]ResourceModel, 0)
+	for _, r := range resources {
+		if _, ok := recentResources[r.ID]; ok {
+			continue // 排除最近用户交互过的资源
+		}
+		score := 0.0
+		for _, action := range userActions {
+			if action.ResourceID == r.ID {
+				score += 1.0 // 用户曾经对该资源进行过交互，给予较高评分
 			}
 		}
+		score *= simScores[r.ID] // 加权得分
+		recommendations = append(recommendations, ResourceModel{
+			ID:          r.ID,
+			Name:        r.Name,
+			Description: r.Description,
+			Url:         r.Url,
+			Tag:         r.Tag,
+			Score:       score,
+		})
 	}
-	return simMatrix
-}
-
-// 计算物品之间的相似度矩阵
-func computeItemSimilarityMatrix(data map[int]map[int]float64) map[int]map[int]float64 {
-	simMatrix := make(map[int]map[int]float64)
-	for iid1, users1 := range transposeData(data) {
-		simMatrix[iid1] = make(map[int]float64)
-		for iid2, users2 := range transposeData(data) {
-			if iid1 != iid2 {
-				vec1 := make([]float64, len(users1))
-				vec2 := make([]float64, len(users1))
-				k := 0
-				for uid := range users1 {
-					if rating2, ok := users2[uid]; ok {
-						vec1[k] = users1[uid]
-						vec2[k] = rating2
-						k++
-					}
-				}
-				vec1 = vec1[:k]
-				vec2 = vec2[:k]
-				simMatrix[iid1][iid2] = cosineSimilarity(vec1, vec2)
-			}
-		}
+	sort.Slice(recommendations, func(i, j int) bool { return recommendations[i].Score > recommendations[j].Score })
+	if numRecs < len(recommendations) {
+		return recommendations[:numRecs]
+	} else {
+		return recommendations
 	}
-	return simMatrix
-}
-
-// 转置数据集，将物品 ID 和用户 ID 进行交换
-func transposeData(data map[int]map[int]float64) map[int]map[int]float64 {
-	transposedData := make(map[int]map[int]float64)
-	for uid, items := range data {
-		for iid, rating := range items {
-			if _, ok := transposedData[iid]; !ok {
-				transposedData[iid] = make(map[int]float64)
-			}
-			transposedData[iid][uid] = rating
-		}
-	}
-	return transposedData
-}
-
-// 为指定用户进行物品推荐
-func recommendItems(uid int, data map[int]map[int]float64, simMatrix map[int]map[int]float64, K, N int) []int {
-	if _, ok := data[uid]; !ok {
-		return nil
-	}
-	neighbors := topKSimilarUsers(uid, data, simMatrix, K)
-	itemScores := make(map[int]float64)
-	for _, neighbor := range neighbors {
-		for iid, rating := range data[neighbor] {
-			if _, ok := data[uid][iid]; !ok {
-				itemScores[iid] += simMatrix[uid][neighbor] * rating
-			}
-		}
-	}
-	items := rankByScore(itemScores)
-	if len(items) > N {
-		items = items[:N]
-	}
-	results := make([]int, len(items))
-	for i, item := range items {
-		results[i] = item.key
-	}
-	return results
-}
-
-// 找到与指定用户相似度最高的 K 个用户
-func topKSimilarUsers(uid int, data map[int]map[int]float64, simMatrix map[int]map[int]float64, K int) []int {
-	sims := make([]struct {
-		uid int
-		sim float64
-	}, 0, len(data)-1)
-	for otherUID, _ := range data {
-		if otherUID != uid {
-			sims = append(sims, struct {
-				uid int
-				sim float64
-			}{otherUID, simMatrix[uid][otherUID]})
-		}
-	}
-	sort.Slice(sims, func(i, j int) bool {
-		return sims[i].sim > sims[j].sim
-	})
-	if len(sims) > K {
-		sims = sims[:K]
-	}
-	results := make([]int, K)
-	for i, item := range sims {
-		results[i] = item.uid
-	}
-	return results
-}
-
-// 按照分数对物品进行排序，返回排名结果和分数
-func rankByScore(scores map[int]float64) []struct {
-	key   int
-	value float64
-} {
-	items := make([]struct {
-		key   int
-		value float64
-	}, len(scores))
-	i := 0
-	for k, v := range scores {
-		items[i] = struct {
-			key   int
-			value float64
-		}{k, v}
-		i++
-	}
-	sort.Slice(items, func(i, j int) bool {
-		return items[i].value > items[j].value
-	})
-	return items
 }

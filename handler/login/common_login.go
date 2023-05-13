@@ -31,18 +31,38 @@ func CommonUserLoginByPhone(c *gin.Context) {
 		return
 	}
 	// 2. 尝试登录
-	user, err := user.GetCommonUserByPhoneAndPassword(request.Phone, request.Password)
+	user, err := user.GetCommonUserByPhoneAndPassword(request.Email, request.Password)
 	if err != nil {
 		// 失败，显示错误提示
 		response.Error(c, err, "账号不存在或密码错误")
 		return
 	} else {
 		// 登录成功
-		token := jwt.NewJWT().IssueToken(user.GetStringID(), user.Name)
+		token := jwt.NewJWT().IssueToken(user.GetStringID(), user.UserName)
 		response.JSON(c, gin.H{
 			"token":  token,
 			"userId": user.GetStringID(),
 		})
 	}
 
+}
+
+func GetCommonUserById(c *gin.Context) {
+	// 1. 验证表单
+	request := requests.GetUserByIdRequest{}
+	if err := c.Bind(&request); err != nil {
+		response.Error(c, err, "请求失败")
+		return
+	}
+	// 2. 尝试登录
+	user, err := user.GetCommonUserById(request.Id)
+	if err != nil {
+		// 失败，显示错误提示
+		response.Error(c, err, "获取用户失败")
+		return
+	} else {
+		response.Data(c, gin.H{
+			"userEmail": user.Email,
+		})
+	}
 }
