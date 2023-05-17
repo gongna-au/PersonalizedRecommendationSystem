@@ -10,18 +10,18 @@ import (
 )
 
 // ShowAccount godoc
-// @Summary      Sign up Using Phone
-// @Description  使用手机号和密码注册帐号
-// @Tags         sign
+// @Summary      GetResourceByBrowse
+// @Description  通过用户的浏览记录推荐
+// @Tags         recommend
 // @Accept       json
 // @Produce      json
-// @Param        req  {object}  body requests.SignupUsingPhoneRequest  true  "Phone--电话号码||Password-- 密码|| Name--昵称"
+// @Param        req  {object}  body requests.GetResourceByUid  true  "Uid--用户ID"
 // @Success      200  {object}  response.Response
 // @Failure      400  {object}  response.Response
 // @Failure      400  {object}  response.Response
 // @Failure      404  {object}  response.Response
 // @Failure      500  {object}  response.Response
-// @Router       /api/v1/sign/common   [post]
+// @Router       /recommend/browse   [post]
 // GetResourceByBrowse
 func GetResourceByBrowse(c *gin.Context) {
 	// 1. 验证表单
@@ -68,6 +68,20 @@ func GetResourceByBrowse(c *gin.Context) {
 	response.Data(c, res)
 }
 
+// ShowAccount godoc
+// @Summary      GetResourceByCollect
+// @Description  通过用户的收藏记录推荐
+// @Tags         recommend
+// @Accept       json
+// @Produce      json
+// @Param        req  {object}  body requests.GetResourceByUid  true  "Uid--用户ID"
+// @Success      200  {object}  response.Response
+// @Failure      400  {object}  response.Response
+// @Failure      400  {object}  response.Response
+// @Failure      404  {object}  response.Response
+// @Failure      500  {object}  response.Response
+// @Router       /recommend/collect  [post]
+// GetResourceByCollect
 func GetResourceByCollect(c *gin.Context) {
 	// 1. 验证表单
 	request := requests.GetResourceByUid{}
@@ -117,6 +131,20 @@ func GetResourceByCollect(c *gin.Context) {
 	response.Data(c, res)
 }
 
+// ShowAccount godoc
+// @Summary      GetResourceBySave
+// @Description  通过用户的保存记录推荐
+// @Tags         recommend
+// @Accept       json
+// @Produce      json
+// @Param        req  {object}  body requests.GetResourceByUid  true  "Uid--用户ID"
+// @Success      200  {object}  response.Response
+// @Failure      400  {object}  response.Response
+// @Failure      400  {object}  response.Response
+// @Failure      404  {object}  response.Response
+// @Failure      500  {object}  response.Response
+// @Router       /recommend/save  [post]
+// GetResourceBySave
 func GetResourceBySave(c *gin.Context) {
 
 	// 1. 验证表单
@@ -163,6 +191,20 @@ func GetResourceBySave(c *gin.Context) {
 	response.Data(c, res)
 }
 
+// ShowAccount godoc
+// @Summary      GetResourceByClick
+// @Description  通过用户点击记录推荐
+// @Tags         recommend
+// @Accept       json
+// @Produce      json
+// @Param        req  {object}  body requests.GetResourceByUid  true  "Uid--用户ID"
+// @Success      200  {object}  response.Response
+// @Failure      400  {object}  response.Response
+// @Failure      400  {object}  response.Response
+// @Failure      404  {object}  response.Response
+// @Failure      500  {object}  response.Response
+// @Router       /recommend/click  [post]
+// GetResourceByClick
 func GetResourceByClick(c *gin.Context) {
 
 	// 1. 验证表单
@@ -209,6 +251,20 @@ func GetResourceByClick(c *gin.Context) {
 	response.Data(c, res)
 }
 
+// ShowAccount godoc
+// @Summary      GetResourceByLike
+// @Description  通过用户点击喜欢推荐
+// @Tags         recommend
+// @Accept       json
+// @Produce      json
+// @Param        req  {object}  body requests.GetResourceByUid  true  "Uid--用户ID"
+// @Success      200  {object}  response.Response
+// @Failure      400  {object}  response.Response
+// @Failure      400  {object}  response.Response
+// @Failure      404  {object}  response.Response
+// @Failure      500  {object}  response.Response
+// @Router       /recommend/like  [post]
+// GetResourceByLike
 func GetResourceByLike(c *gin.Context) {
 
 	// 1. 验证表单

@@ -40,6 +40,16 @@ func GetCommonUserByPhoneAndPassword(email string, password string) (*CommonUser
 	return u, d.Error
 }
 
+func UpdateUser(email string, password string, newpassword string) (*CommonUserModel, error) {
+	u := &CommonUserModel{}
+
+	d := db.DB.
+		Table(u.TableName()).
+		Where("email = ? AND password = ?", email, password).
+		Update("password", newpassword)
+	return u, d.Error
+}
+
 func GetCommonUserById(id int) (*CommonUserModel, error) {
 	u := &CommonUserModel{}
 	d := db.DB.

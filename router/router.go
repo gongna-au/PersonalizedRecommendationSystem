@@ -1,6 +1,7 @@
 package router
 
 import (
+	"PersonalizedRecommendationSystem/handler/action"
 	"PersonalizedRecommendationSystem/handler/login"
 	"PersonalizedRecommendationSystem/handler/recommend"
 	"net/http"
@@ -68,7 +69,8 @@ func RegisterAPIRoutes(g *gin.Engine) {
 	g1 := g.Group("/api/v1/login")
 	{
 		//使用手机号和密码登陆
-		g1.POST("/common", login.CommonUserLoginByPhone)
+		g1.POST("/common", login.CommonUserLoginByEmail)
+		g1.POST("/user", login.UpdateUser)
 	}
 	g2 := g.Group("/api/v1/sign")
 	{
@@ -83,6 +85,14 @@ func RegisterAPIRoutes(g *gin.Engine) {
 		g3.POST("/like", recommend.GetResourceByLike)
 		g3.POST("/click", recommend.GetResourceByClick)
 		g3.POST("/save", recommend.GetResourceBySave)
+	}
+	g4 := g.Group("/api/v1/action")
+	{
+		g4.POST("/browse", action.UpdateUserBrowse)
+		g4.POST("/collect", action.UpdateUserCollect)
+		g4.POST("/like", action.UpdateUserLike)
+		g4.POST("/click", action.UpdateUserClick)
+		g4.POST("/save", action.UpdateUserSave)
 	}
 
 }

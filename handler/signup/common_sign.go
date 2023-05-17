@@ -23,7 +23,7 @@ import (
 // @Failure      400  {object}  response.Response
 // @Failure      404  {object}  response.Response
 // @Failure      500  {object}  response.Response
-// @Router       /api/v1/sign/common   [post]
+// @Router       /sign/common   [post]
 // CommonUserSignupUsingPhone 使用手机和密码进行注册
 func CommonUserSignupUsingPhone(c *gin.Context) {
 

@@ -89,6 +89,10 @@ INSERT INTO `user_actions` (`user_id`, `resource_id`, `action_type`) VALUES
 (3, 2, 'like');
 
 INSERT INTO `user_actions` (`user_id`, `resource_id`, `action_type`) VALUES 
+(1, 1, 'dislike'),
+
+
+INSERT INTO `user_actions` (`user_id`, `resource_id`, `action_type`) VALUES 
 (1, 1, 'save'),
 (2, 1, 'save'),
 (3, 1, 'save'),
