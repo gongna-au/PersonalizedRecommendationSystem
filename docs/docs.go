@@ -285,6 +285,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/action/search": {
+            "post": {
+                "description": "更新用户点赞记录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "recommend"
+                ],
+                "summary": "UpdateUserSearch",
+                "parameters": [
+                    {
+                        "description": "Uid--用户ID",
+                        "name": "{object}",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateUserLikeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
         "/login/common": {
             "post": {
                 "description": "用户通过邮箱和密码登陆",

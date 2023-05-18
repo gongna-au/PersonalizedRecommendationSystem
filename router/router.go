@@ -93,6 +93,7 @@ func RegisterAPIRoutes(g *gin.Engine) {
 		g4.POST("/like", action.UpdateUserLike)
 		g4.POST("/click", action.UpdateUserClick)
 		g4.POST("/save", action.UpdateUserSave)
+		g4.POST("/search", action.UpdateUserSearch)
 	}
 
 }

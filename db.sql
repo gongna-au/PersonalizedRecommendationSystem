@@ -105,5 +105,12 @@ INSERT INTO `user_actions` (`user_id`, `resource_id`, `action_type`) VALUES
 (4, 1, 'click'),
 (1, 2, 'click');
 
+INSERT INTO `user_actions` (`user_id`, `resource_id`, `action_type`) VALUES 
+(1, 1, 'search'),
+(2, 1, 'search'),
+(3, 1, 'search'),
+(4, 1, 'search'),
+(1, 2, 'search');
+
 Select * from `user_actions`;
 

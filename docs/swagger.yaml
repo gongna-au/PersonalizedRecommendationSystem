@@ -268,6 +268,40 @@ paths:
       summary: GetResourceBySave
       tags:
       - recommend
+  /action/search:
+    post:
+      consumes:
+      - application/json
+      description: 更新用户点赞记录
+      parameters:
+      - description: Uid--用户ID
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/UpdateUserLikeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: UpdateUserSearch
+      tags:
+      - recommend
   /login/common:
     post:
       consumes:

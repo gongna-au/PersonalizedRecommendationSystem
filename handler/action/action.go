@@ -189,3 +189,40 @@ func UpdateUserLike(c *gin.Context) {
 		"res": "创建成功",
 	})
 }
+
+// ShowAccount godoc
+// @Summary      UpdateUserSearch
+// @Description  更新用户点赞记录
+// @Tags         recommend
+// @Accept       json
+// @Produce      json
+// @Param        req  {object}  body requests.UpdateUserLikeRequest true  "Uid--用户ID"
+// @Success      200  {object}  response.Response
+// @Failure      400  {object}  response.Response
+// @Failure      400  {object}  response.Response
+// @Failure      404  {object}  response.Response
+// @Failure      500  {object}  response.Response
+// @Router       /action/search  [post]
+// UpdateUserSearch
+func UpdateUserSearch(c *gin.Context) {
+
+	// 1. 验证表单
+	request := requests.UpdateUserSearchRequest{}
+	// 2. 绑定
+	if err := c.Bind(&request); err != nil {
+		response.Error(c, err, "请求失败")
+	}
+	// 2. 验证成功，创建数据
+	actionModel := action.UserActionModel{
+		ResourceID: request.ResourceID,
+		UserID:     request.Uid,
+		ActionType: "search",
+	}
+	err := actionModel.Create()
+	if err != nil {
+		response.Error(c, err, "请求失败")
+	}
+	response.Data(c, gin.H{
+		"res": "创建成功",
+	})
+}

@@ -22,6 +22,11 @@ type UpdateUserLikeRequest struct {
 	ResourceID int `json:"resource_id,omitempty" gorm:"column:resource_id;" binding:"required"`
 } //@name UpdateUserLikeRequest
 
+type UpdateUserSearchRequest struct {
+	Uid        int `json:"uid,omitempty" gorm:"column:uid;" binding:"required"`
+	ResourceID int `json:"resource_id,omitempty" gorm:"column:resource_id;" binding:"required"`
+} //@name UpdateUserLikeRequest
+
 type UpdateUserSaveRequest struct {
 	ResourceID int `json:"resource_id,omitempty" gorm:"column:resource_id;" binding:"required"`
 	Uid        int `json:"uid,omitempty" gorm:"column:uid;" binding:"required"`

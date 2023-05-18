@@ -103,3 +103,108 @@ func GetRecommendations(userActions []UserActionModel, resources []ResourceModel
 		return recommendations
 	}
 }
+
+// ... BaseModel, ResourceModel, UserActionModel 定义 ...
+
+func GetRecommendationsByXieTong(userActions []UserActionModel, resources []ResourceModel, numRecs int, targetUserID int) []ResourceModel {
+	userItemMatrix := createUserItemMatrix(userActions)
+
+	userSimilarities := calculateUserSimilarities(userItemMatrix, targetUserID)
+
+	recommendations := generateRecommendations(userItemMatrix, userSimilarities, resources, numRecs, targetUserID)
+
+	return recommendations
+}
+
+func createUserItemMatrix(userActions []UserActionModel) map[int]map[int]float64 {
+	matrix := make(map[int]map[int]float64)
+
+	for _, action := range userActions {
+		if _, ok := matrix[action.UserID]; !ok {
+			matrix[action.UserID] = make(map[int]float64)
+		}
+
+		matrix[action.UserID][action.ResourceID] = 1.0
+	}
+
+	return matrix
+}
+
+func calculateUserSimilarities(userItemMatrix map[int]map[int]float64, targetUserID int) map[int]float64 {
+	similarities := make(map[int]float64)
+
+	targetUserRatings := userItemMatrix[targetUserID]
+
+	for userID, userRatings := range userItemMatrix {
+		if userID == targetUserID {
+			continue
+		}
+
+		dotProduct := 0.0
+		targetUserNorm := 0.0
+		userNorm := 0.0
+
+		for resourceID, targetUserRating := range targetUserRatings {
+			userRating, ok := userRatings[resourceID]
+			if !ok {
+				continue
+			}
+
+			dotProduct += targetUserRating * userRating
+			targetUserNorm += targetUserRating * targetUserRating
+			userNorm += userRating * userRating
+		}
+
+		if dotProduct == 0 {
+			continue
+		}
+
+		similarity := dotProduct / (math.Sqrt(targetUserNorm) * math.Sqrt(userNorm))
+		similarities[userID] = similarity
+	}
+
+	return similarities
+}
+
+func generateRecommendations(userItemMatrix map[int]map[int]float64, userSimilarities map[int]float64, resources []ResourceModel, numRecs int, targetUserID int) []ResourceModel {
+	type resourceScore struct {
+		resource ResourceModel
+		score    float64
+	}
+
+	resourceScores := make([]resourceScore, 0)
+
+	for _, resource := range resources {
+		if _, ok := userItemMatrix[targetUserID][resource.ID]; ok {
+			continue
+		}
+
+		score := 0.0
+
+		for userID, similarity := range userSimilarities {
+			userRating, ok := userItemMatrix[userID][resource.ID]
+			if !ok {
+				continue
+			}
+
+			score += similarity * userRating
+		}
+
+		resourceScores = append(resourceScores, resourceScore{resource: resource, score: score})
+	}
+
+	sort.Slice(resourceScores, func(i, j int) bool {
+		return resourceScores[i].score > resourceScores[j].score
+	})
+
+	if numRecs > len(resourceScores) {
+		numRecs = len(resourceScores)
+	}
+
+	recommendations := make([]ResourceModel, numRecs)
+	for i := 0; i < numRecs; i++ {
+		recommendations[i] = resourceScores[i].resource
+	}
+
+	return recommendations
+}
